@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 public class APITests {
-	public static DateTimeFormatter dateTask = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
+	public static DateTimeFormatter task = DateTimeFormatter.ofPattern("A EEEE");
 	public static DateTimeFormatter dueDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@BeforeClass
@@ -32,8 +32,8 @@ public class APITests {
 
 	@Test
 	public void deveAdicionarUmaTarefaComSucesso() {
-		LocalDateTime dataTarefa = LocalDateTime.now().plusDays(1);
-		String body = "{\"task\":\"Tarefa de " + dataTarefa.format(dateTask)
+		LocalDateTime dataTarefa = LocalDateTime.now();
+		String body = "{\"task\":\"Teste via API " + dataTarefa.format(task)
 			+ "\",\"dueDate\":\"" + dataTarefa.format(dueDate)+ "\"}";
 		RestAssured
 		.given()
@@ -48,7 +48,7 @@ public class APITests {
 	@Test
 	public void naoDeveAdicionarTarefaInvalida() {
 		LocalDateTime dataTarefa = LocalDateTime.now().minusDays(1);
-		String body = "{\"task\":\"Tarefa de " + dataTarefa.format(dateTask)
+		String body = "{\"task\":\"Teste via API " + dataTarefa.format(task)
 			+ "\",\"dueDate\":\"" + dataTarefa.format(dueDate)+ "\"}";
 		RestAssured
 		.given()
