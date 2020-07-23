@@ -10,7 +10,7 @@ import org.junit.Test;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-public class APITests {
+public class APITest {
 	public static DateTimeFormatter task = DateTimeFormatter.ofPattern("A EEEE");
 	public static DateTimeFormatter dueDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
