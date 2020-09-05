@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 public class APITest {
-	public static DateTimeFormatter task = DateTimeFormatter.ofPattern("A EEEE");
+	public static DateTimeFormatter task = DateTimeFormatter.ofPattern("EEEE HH:mm:ss.SSS");
 	public static DateTimeFormatter dueDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@BeforeClass
@@ -19,10 +19,29 @@ public class APITest {
 		RestAssured.baseURI = "http://localhost:8081/tasks-backend";
 	}
 
+	public Integer adicionarTarefa() {
+		LocalDateTime dataTarefa = LocalDateTime.now();
+		String body = "{\"task\":\"Teste via API " + dataTarefa.format(task)
+			+ "\",\"dueDate\":\"" + dataTarefa.format(dueDate)+ "\"}";
+		return RestAssured
+		.given()
+			.body(body)
+			.contentType(ContentType.JSON)
+		.when()
+			.post("/todo")
+		.then()
+			.statusCode(201)
+			.extract()
+			.path("id")
+		;
+	}
+
 	@Test
 	public void deveRetornarTarefas() {
 		RestAssured
 		.given()
+		.body("")
+		.contentType(ContentType.JSON)
 		.when()
 			.get("/todo")
 		.then()
@@ -32,19 +51,9 @@ public class APITest {
 
 	@Test
 	public void deveAdicionarUmaTarefaComSucesso() {
-		LocalDateTime dataTarefa = LocalDateTime.now();
-		String body = "{\"task\":\"Teste via API " + dataTarefa.format(task)
-			+ "\",\"dueDate\":\"" + dataTarefa.format(dueDate)+ "\"}";
-		RestAssured
-		.given()
-			.body(body)
-			.contentType(ContentType.JSON)
-		.when()
-			.post("/todo")
-		.then()
-			.statusCode(201)
-		;
+		adicionarTarefa();
 	}
+
 	@Test
 	public void naoDeveAdicionarTarefaInvalida() {
 		LocalDateTime dataTarefa = LocalDateTime.now().minusDays(1);
@@ -62,4 +71,15 @@ public class APITest {
 		;
 	}
 
+	@Test
+	public void deveRemoverUmaTarefaComSucesso() {
+		Integer id = adicionarTarefa();
+		RestAssured
+		.given()
+		.when()
+			.delete("/todo/" + id)
+		.then()
+			.statusCode(204)
+		;
+	}
 }
